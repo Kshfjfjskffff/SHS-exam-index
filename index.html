@@ -48,7 +48,7 @@ footer p{margin:4px 0}footer a{color:var(--accent)}
   <select id="kind"><option value="">全部資源類型</option></select>
 </div>
 <main id="list"></main>
-<footer id="about"></footer>
+<footer><div id="about"></div><p id="visits" hidden></p></footer>
 
 <script>
 const BASE="https://docs.google.com/spreadsheets/d/e/2PACX-1vThXok4EU_q47B6Wzq_4yzNzYROx008g-JEDHI6achQvv_UurhwFO1ACwQTzrF9bHZ_7GY83IaaewGB/pub";
@@ -265,6 +265,12 @@ ABOUT=SNAPSHOTS.about;
 load(DATASETS[0]);
 fetch(BASE+'?gid='+ABOUT_GID+'&single=true&output=csv').then(r=>{if(!r.ok)throw new Error(r.status);return r.text()})
   .then(txt=>{const a=parseAbout(parseCSV(txt));if(a.maker||a.notice){ABOUT=a;render();renderAbout(a)}}).catch(()=>{});
+// 累計造訪次數（GoatCounter 公開計數器）；數字為 0 或讀取失敗時不顯示
+function showVisits(j){
+  const n=Number(String((j&&j.count)||'').split(/[^0-9]/).join(''));
+  if(n>0){const v=$('visits');v.textContent='累計造訪 '+j.count+' 次';v.hidden=false}
+}
+fetch('https://shs-exam.goatcounter.com/counter/TOTAL.json').then(r=>r.ok?r.json():Promise.reject()).then(showVisits).catch(()=>{});
 </script>
 <script data-goatcounter="https://shs-exam.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
