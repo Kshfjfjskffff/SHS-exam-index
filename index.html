@@ -270,7 +270,12 @@ function showVisits(j){
   const n=Number(String((j&&j.count)||'').split(/[^0-9]/).join(''));
   if(n>0){const v=$('visits');v.textContent='累計造訪 '+j.count+' 次';v.hidden=false}
 }
-fetch('https://shs-exam.goatcounter.com/counter/TOTAL.json').then(r=>r.ok?r.json():Promise.reject()).then(showVisits).catch(()=>{});
+// 讀取「這個網頁」的計數（全站總數 TOTAL 目前不會更新）；網址若以 index.html 結尾則視為同一頁
+function counterUrl(){
+  const p=location.pathname.endsWith('index.html')?location.pathname.slice(0,-'index.html'.length):location.pathname;
+  return 'https://shs-exam.goatcounter.com/counter/'+encodeURIComponent(p)+'.json';
+}
+fetch(counterUrl()).then(r=>r.ok?r.json():Promise.reject()).then(showVisits).catch(()=>{});
 </script>
 <script data-goatcounter="https://shs-exam.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
